@@ -39,7 +39,7 @@ class Program
                     manager.ClearAllVehicles();
                     break;
                 case "7":
-                    Console.WriteLine("Введите Id транспортного средства");
+                    Print.Message("Введите Id транспортного средства");
                     int id;
                     if (!int.TryParse(Console.ReadLine()?.Trim(), out id))
                     {
@@ -49,7 +49,7 @@ class Program
                     IVehicle? vehicle = manager.FindVechicle(id);
                     if (vehicle == null)
                     {
-                        Console.WriteLine($"Транспортное средство c Id = {id} не найдено");
+                        Print.Message($"Транспортное средство c Id = {id} не найдено");
                     }
                     else
                     {
@@ -94,11 +94,11 @@ class Program
                     }
                     break;
                 case "8":
-                    Console.WriteLine("Программа успешно завершена!");
+                    Print.Message("Программа успешно завершена!");
                     return;
 
                 default:
-                    Console.WriteLine("Ошибка ввода. Команда не распознана");
+                    Print.Message("Ошибка ввода. Команда не распознана");
                     break;
             }
         }
@@ -192,41 +192,55 @@ class VehicleManager
             _vahicle.Add(factory.CreateMotorcycle());
             Print.Message("Мотоцикл успешно создан!\n");
         }
-    } // создаёт транспортное средство указанного типа (car/motorcycle) с использованием переданной фабрики и добавляет его в список
+    }
     public void ShowAllVehicles()
     {
+        if (_vahicle.Count == 0)
+        {
+            Print.Message("Список транспортных средств пуст.\n");
+            return;
+        }
         foreach (var item in _vahicle)
         {
-            Console.WriteLine(item.GetInfo());
-            Console.WriteLine("------------------------------------------");
+            Print.Message(item.GetInfo());
+            Print.Message("------------------------------------------");
         }
-    } //выводит информацию обо всех созданных транспортных средствах
+    }
     public void StartAllVehicles()
     {
+        if (_vahicle.Count == 0)
+        {
+            Print.Message("Невозможно запустить транспортные средства. Список транспортных средств пуст.\n");
+            return;
+        }
         foreach (var item in _vahicle)
         {
             item.Start();
         }
-    } //запускает все транспортные средства
+    }
     public void StartVehicles(IVehicle veh)
     {
         veh.Start();
-    } //запускает конкретное транспортное средство
+    }
     public void StopAllVehicles()
     {
+        if (_vahicle.Count == 0)
+        {
+            Print.Message("Невозможно остановить транспортные средства. Список транспортных средств пуст.\n");
+            return;
+        }
         foreach (var item in _vahicle)
         {
             item.Stop();
         }
-    } // останавливает все транспортные средства
+    } 
     public void StopVehicles(IVehicle veh)
     {
         veh.Stop();
-    }// останавливает конкретное транспортное средство
-    public void ClearAllVehicles()
+    }    public void ClearAllVehicles()
     {
         _vahicle.Clear();
-    } // очищает список транспортных средств
+    }
     public void OpenTrunk(IVehicle veh)
     {
         if (veh is ICar car)
@@ -246,7 +260,7 @@ class VehicleManager
     {
         if (veh is IMotocycle moto)
             moto.DoWheelie();
-        else 
+        else
             Print.Message("Данное транспортное средство не может выполнять трюки");
     }
     public IVehicle? FindVechicle(int id)
@@ -267,13 +281,13 @@ public interface IVehicle
 
 public interface ICar : IVehicle
 {
-    void OpenTrunk(); // открыть багажник
+    void OpenTrunk(); 
     void CloseTrunk();
 }
 
 public interface IMotocycle : IVehicle
 {
-    void DoWheelie(); // выполнить трюк
+    void DoWheelie(); 
 }
 
 // == Абстрактные классы ==
