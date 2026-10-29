@@ -46,7 +46,7 @@ class Program
                         Print.Message("Некорректный ID.");
                         break;
                     }
-                    IVehicle? vehicle = manager.FindVechicle(id);
+                    IVehicle? vehicle = manager.FindVehicle(id);
                     if (vehicle == null)
                     {
                         Print.Message($"Транспортное средство c Id = {id} не найдено");
@@ -73,7 +73,7 @@ class Program
                                     break;
                             }
                         }
-                        else if (vehicle is Motocycle moto)
+                        else if (vehicle is Motorcycle moto)
                         {
                             Print.MotoMenu();
                             string inp = Console.ReadLine()?.Trim() ?? "";
@@ -179,28 +179,28 @@ class Print
 
 class VehicleManager
 {
-    List<IVehicle> _vahicle = new();
+    List<IVehicle> _vehicles = new();
     public void CreateVehicle(string type, IVehicleFactory factory)
     {
         if (type == "car")
         {
-            _vahicle.Add(factory.CreateCar());
+            _vehicles.Add(factory.CreateCar());
             Print.Message("Машина успешно создана!\n");
         }
         if (type == "mot")
         {
-            _vahicle.Add(factory.CreateMotorcycle());
+            _vehicles.Add(factory.CreateMotorcycle());
             Print.Message("Мотоцикл успешно создан!\n");
         }
     }
     public void ShowAllVehicles()
     {
-        if (_vahicle.Count == 0)
+        if (_vehicles.Count == 0)
         {
             Print.Message("Список транспортных средств пуст.\n");
             return;
         }
-        foreach (var item in _vahicle)
+        foreach (var item in _vehicles)
         {
             Print.Message(item.GetInfo());
             Print.Message("------------------------------------------");
@@ -208,12 +208,12 @@ class VehicleManager
     }
     public void StartAllVehicles()
     {
-        if (_vahicle.Count == 0)
+        if (_vehicles.Count == 0)
         {
             Print.Message("Невозможно запустить транспортные средства. Список транспортных средств пуст.\n");
             return;
         }
-        foreach (var item in _vahicle)
+        foreach (var item in _vehicles)
         {
             item.Start();
         }
@@ -224,12 +224,12 @@ class VehicleManager
     }
     public void StopAllVehicles()
     {
-        if (_vahicle.Count == 0)
+        if (_vehicles.Count == 0)
         {
             Print.Message("Невозможно остановить транспортные средства. Список транспортных средств пуст.\n");
             return;
         }
-        foreach (var item in _vahicle)
+        foreach (var item in _vehicles)
         {
             item.Stop();
         }
@@ -239,7 +239,7 @@ class VehicleManager
         veh.Stop();
     }    public void ClearAllVehicles()
     {
-        _vahicle.Clear();
+        _vehicles.Clear();
     }
     public void OpenTrunk(IVehicle veh)
     {
@@ -258,14 +258,14 @@ class VehicleManager
     }
     public void DoWheelie(IVehicle veh)
     {
-        if (veh is IMotocycle moto)
+        if (veh is IMotorcycle moto)
             moto.DoWheelie();
         else
             Print.Message("Данное транспортное средство не может выполнять трюки");
     }
-    public IVehicle? FindVechicle(int id)
+    public IVehicle? FindVehicle(int id)
     {
-        return _vahicle.FirstOrDefault(v => v.Id == id);
+        return _vehicles.FirstOrDefault(v => v.Id == id);
     }
 }
 
@@ -285,7 +285,7 @@ public interface ICar : IVehicle
     void CloseTrunk();
 }
 
-public interface IMotocycle : IVehicle
+public interface IMotorcycle : IVehicle
 {
     void DoWheelie(); 
 }
@@ -380,7 +380,7 @@ abstract class Car : Vehicle, ICar
         base.Start();
     }
 }
-abstract class Motocycle : Vehicle, IMotocycle
+abstract class Motorcycle : Vehicle, IMotorcycle
 {
     public override string VehicleName => "Мотоцикл";
     public void DoWheelie()
@@ -406,12 +406,12 @@ class GasCar : Car
     public override string VehicleName => "Автомобиль с бензиновым двигателем";
 }
 
-class ElecticMotocycle : Motocycle
+class ElectricMotorcycle : Motorcycle
 {
     public override string VehicleName => "Электромотоцикл";
 }
 
-class GasMotocycle : Motocycle
+class GasMotorcycle : Motorcycle
 {
     public override string VehicleName => "Мотоцикл на бензиновом двигателе";
 }
@@ -420,19 +420,19 @@ class GasMotocycle : Motocycle
 public interface IVehicleFactory
 {
     ICar CreateCar();
-    IMotocycle CreateMotorcycle();
+    IMotorcycle CreateMotorcycle();
 }
 
 public class ElectricVehicleFactory : IVehicleFactory
 {
     public ICar CreateCar() => new ElectricCar();
 
-    public IMotocycle CreateMotorcycle() => new ElecticMotocycle();
+    public IMotorcycle CreateMotorcycle() => new ElectricMotorcycle();
 }
 
 public class GasVehicleFactory : IVehicleFactory
 {
     public ICar CreateCar() => new GasCar();
 
-    public IMotocycle CreateMotorcycle() => new GasMotocycle();
+    public IMotorcycle CreateMotorcycle() => new GasMotorcycle();
 }
